@@ -35,18 +35,18 @@ docker compose up --build
 Log in with `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` from `.env`. You will be asked to change the password on
 first login. The admin is only created when the database contains no users yet.
 
-Then, as admin:
+Then, as admin (the UI is in German; menu labels are given in parentheses):
 
-1. **Einstellungen** – enter the organization data (shown on invoices) and the default monthly/yearly fees.
-2. **Benutzer** – create users for cashiers and secretaries (they get a temporary password and must change it).
-3. **Mitglieder** → **Zahlungen** – register members and record payments; each payment creates an invoice PDF
-   that is emailed automatically if the member has an email address (see Mailpit).
+1. **Settings** ("Einstellungen") – enter the organization data (shown on invoices) and the default monthly/yearly fees.
+2. **Users** ("Benutzer") – create users for cashiers and secretaries (they get a temporary password and must change it).
+3. **Members** ("Mitglieder") → **Payments** ("Zahlungen") – register members and record payments; each payment
+   creates an invoice PDF that is emailed automatically if the member has an email address (see Mailpit).
 
 ## Roles
 
 Every user has exactly one role. Authorization is enforced by the API; the UI only hides what a role cannot use.
 
-| Capability | Administrator | Kassier (Cashier) | Schriftführer (Secretary) |
+| Capability | Admin ("Administrator") | Cashier ("Kassier") | Secretary ("Schriftführer") |
 |---|:-:|:-:|:-:|
 | Users, organization & fee settings, audit log | ✅ | – | – |
 | View members | ✅ | ✅ (read-only) | ✅ |
@@ -86,7 +86,7 @@ SMTP_USERNAME=your-smtp-user
 SMTP_PASSWORD=your-smtp-password
 SMTP_USE_STARTTLS=true
 SMTP_FROM_ADDRESS=verified-sender@yourdomain.at
-SMTP_FROM_NAME=Mein Verein
+SMTP_FROM_NAME=My Charity
 ```
 
 Then restart: `docker compose up -d`. The sender address must be verified with the provider.
