@@ -1,0 +1,69 @@
+# Production stack for the home server (Proxmox LXC).
+# Uses the images built by the CI/CD pipeline (GHCR) instead of building locally,
+# no Mailpit (a real SMTP provider is required) and secure cookies by default.
+#
+# The pipeline copies this file to $DEPLOY_DIR/docker-compose.yml on the server.
+# .env lives only on the server and is never overwritten by the pipeline.
+name: charity-crm
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-charitycrm}
+      POSTGRES_USER: ${POSTGRES_USER:-charitycrm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    image: ghcr.io/aman12b/charity-crm-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Default: Host=db;Port=5432;Database=${POSTGRES_DB:-charitycrm};Username=${POSTGRES_USER:-charitycrm};Password=${POSTGRES_PASSWORD}
+      Smtp__Host: ${SMTP_HOST:?Set SMTP_HOST in .env (real SMTP provider)}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__Username: ${SMTP_USERNAME:-}
+      Smtp__Password: ${SMTP_PASSWORD:-}
+      Smtp__UseStartTls: ${SMTP_USE_STARTTLS:-true}
+      Smtp__FromAddress: ${SMTP_FROM_ADDRESS:?Set SMTP_FROM_ADDRESS in .env}
+      Smtp__FromName: ${SMTP_FROM_NAME:-Charity CRM}
+      Storage__InvoicePath: /data/invoices
+      DataProtection__KeyPath: /data/keys
+      Seed__AdminEmail: ${SEED_ADMIN_EMAIL:?Set SEED_ADMIN_EMAIL in .env}
+      Seed__AdminPassword: ${SEED_ADMIN_PASSWORD:?Set SEED_ADMIN_PASSWORD in .env}
+      Auth__CookieSecure: ${AUTH_COOKIE_SECURE:-true}
+      Serilog__MinimumLevel__Default: ${LOG_LEVEL:-Information}
+    volumes:
+      - appdata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: ghcr.io/aman12b/charity-crm-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      # Only Nginx Proxy Manager should talk to this port (see docs/DEPLOYMENT.md).
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  appdata:

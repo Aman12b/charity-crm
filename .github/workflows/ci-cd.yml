@@ -1,0 +1,159 @@
+name: CI/CD
+
+# - Pull requests: tests only (GitHub-hosted runners, never the home server).
+# - Push to main:  tests -> build images -> push to GHCR -> deploy on the home server.
+# - Manual run:    deploy an existing image tag (rollback), e.g. a previous commit SHA.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag to deploy (commit SHA). Empty = build and deploy current main."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+env:
+  # GHCR image names must be lowercase.
+  IMAGE_PREFIX: ghcr.io/aman12b/charity-crm
+
+jobs:
+  backend-test:
+    if: github.event_name != 'workflow_dispatch' || inputs.tag == ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      # Integration tests start PostgreSQL via Testcontainers (Docker is available on ubuntu-latest).
+      - run: dotnet test backend/CharityCrm.sln -c Release
+
+  frontend-test:
+    if: github.event_name != 'workflow_dispatch' || inputs.tag == ''
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  build:
+    needs: [backend-test, frontend-test]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        component: [api, web]
+        include:
+          - component: api
+            context: backend
+          - component: web
+            context: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.component }}:latest
+          cache-from: type=gha,scope=${{ matrix.component }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.component }}
+
+  deploy:
+    needs: [build]
+    # Runs after a successful build, or directly for a manual rollback with a tag.
+    if: >-
+      always() && github.ref == 'refs/heads/main' &&
+      (needs.build.result == 'success' ||
+       (github.event_name == 'workflow_dispatch' && inputs.tag != ''))
+    # Self-hosted runner inside the Proxmox LXC (labels: self-hosted, charity-crm).
+    runs-on: [self-hosted, charity-crm]
+    environment: production
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: read
+    env:
+      DEPLOY_DIR: /opt/charity-crm
+      IMAGE_TAG: ${{ inputs.tag != '' && inputs.tag || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            docker-compose.prod.yml
+            scripts
+
+      - name: Copy compose file and scripts
+        run: |
+          test -f "$DEPLOY_DIR/.env" || { echo "::error::$DEPLOY_DIR/.env missing – create it once on the server"; exit 1; }
+          cp docker-compose.prod.yml "$DEPLOY_DIR/docker-compose.yml"
+          mkdir -p "$DEPLOY_DIR/scripts"
+          cp scripts/*.sh "$DEPLOY_DIR/scripts/"
+          chmod +x "$DEPLOY_DIR"/scripts/*.sh
+          # Remember the deployed tag so a manual `docker compose up -d` keeps the same version.
+          echo "$IMAGE_TAG" > "$DEPLOY_DIR/.image-tag"
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Backup before deploy
+        working-directory: ${{ env.DEPLOY_DIR }}
+        run: |
+          if docker compose ps --status running --services | grep -q '^db$'; then
+            scripts/backup.sh "$DEPLOY_DIR/backups"
+            ls -1t "$DEPLOY_DIR"/backups/db-*.dump 2>/dev/null | tail -n +15 | xargs -r rm --
+            ls -1t "$DEPLOY_DIR"/backups/appdata-*.tar.gz 2>/dev/null | tail -n +15 | xargs -r rm --
+          else
+            echo "First deployment – nothing to back up."
+          fi
+
+      - name: Pull and start
+        working-directory: ${{ env.DEPLOY_DIR }}
+        run: |
+          docker compose pull
+          docker compose up -d --remove-orphans
+
+      - name: Wait for health check
+        working-directory: ${{ env.DEPLOY_DIR }}
+        run: |
+          for i in $(seq 1 30); do
+            if docker compose exec -T api curl -fsS http://localhost:8080/api/health >/dev/null 2>&1; then
+              echo "API healthy (tag $IMAGE_TAG)"; exit 0
+            fi
+            sleep 5
+          done
+          docker compose logs --tail=100 api
+          echo "::error::API did not become healthy"; exit 1
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker logout ghcr.io || true
+          docker image prune -f
