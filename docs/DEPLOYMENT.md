@@ -2,7 +2,7 @@
 
 ```
 User ──https──> Cloudflare (DNS, proxied, TLS) ──> Nginx Proxy Manager ──http──> LXC "charity-crm" :8080 (web → api → db)
-GitHub push to main ──> Actions: tests → build images → GHCR ──> self-hosted runner in the LXC: pull + up -d
+GitHub push to master ──> Actions: tests → build images → GHCR ──> self-hosted runner in the LXC: pull + up -d
 ```
 
 The home server needs **no inbound port for the pipeline**: the self-hosted runner connects outward to GitHub.
@@ -65,7 +65,7 @@ Optional: Settings → Environments → `production` → *Required reviewers* to
 
 ## 5. Day-to-day
 
-- Deploy: push/merge to `main`. A backup is taken before every deployment (`/opt/charity-crm/backups`, last 14 kept).
+- Deploy: push/merge to `master`. A backup is taken before every deployment (`/opt/charity-crm/backups`, last 14 kept).
 - Rollback: Actions → CI/CD → *Run workflow* → `tag` = previous commit SHA.
 - Manual restart with the deployed version: `cd /opt/charity-crm && IMAGE_TAG=$(cat .image-tag) docker compose up -d`
 - Logs: `docker compose logs -f api`
