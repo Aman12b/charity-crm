@@ -1,5 +1,6 @@
 using CharityCrm.Core.Abstractions;
 using CharityCrm.Core.Entities;
+using CharityCrm.Infrastructure.Persistence.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -11,6 +12,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityUserContext<AppUser, Guid>(options), IAppDbContext
 {
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<Member> Members => Set<Member>();
+
+    public void SetOriginalRowVersion<TEntity>(TEntity entity, uint rowVersion) where TEntity : class =>
+        Entry(entity).Property<uint>("RowVersion").OriginalValue = rowVersion;
 
     public async Task<ITransaction> BeginTransactionAsync(CancellationToken ct = default) =>
         new EfTransaction(await Database.BeginTransactionAsync(ct));
@@ -18,6 +23,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.HasPostgresExtension("pg_trgm");
+        modelBuilder.HasSequence<long>(MemberConfiguration.MemberNumberSequence);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 

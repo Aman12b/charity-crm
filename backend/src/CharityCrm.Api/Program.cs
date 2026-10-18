@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
 using CharityCrm.Api.Features.Auth;
+using CharityCrm.Api.Features.Members;
 using CharityCrm.Api.Features.Users;
 using CharityCrm.Api.Setup;
 using CharityCrm.Core;
@@ -64,6 +65,7 @@ app.MapHealthChecks("/api/health", new HealthCheckOptions { ResponseWriter = Hea
     .AllowAnonymous();
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapMemberEndpoints();
 
 await DatabaseInitializer.InitializeAsync(app.Services);
 

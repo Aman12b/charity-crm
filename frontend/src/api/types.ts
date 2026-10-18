@@ -38,3 +38,64 @@ export const roleLabels: Record<Role, string> = {
 };
 
 export const roleOptions = Object.entries(roleLabels).map(([value, label]) => ({ value, label }));
+
+export type BillingInterval = 'Monthly' | 'Yearly';
+export type MemberStatus = 'Active' | 'Inactive';
+
+export const intervalLabels: Record<BillingInterval, string> = { Monthly: 'Monatlich', Yearly: 'Jährlich' };
+export const memberStatusLabels: Record<MemberStatus, string> = { Active: 'Aktiv', Inactive: 'Inaktiv' };
+export const intervalOptions = Object.entries(intervalLabels).map(([value, label]) => ({ value, label }));
+export const memberStatusOptions = Object.entries(memberStatusLabels).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+export interface MemberListItem {
+  id: string;
+  memberNumber: string;
+  firstName: string;
+  lastName: string;
+  city: string;
+  email: string | null;
+  billingInterval: BillingInterval;
+  status: MemberStatus;
+}
+
+export interface Member extends MemberListItem {
+  dateOfBirth: string;
+  street: string;
+  postalCode: string;
+  country: string;
+  phone: string | null;
+  joinDate: string;
+  leaveDate: string | null;
+  leaveReason: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  rowVersion: number;
+}
+
+export interface MemberInput {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  email: string;
+  phone: string;
+  billingInterval: BillingInterval;
+  joinDate: string;
+  notes: string;
+}
+
+export interface DuplicateMember {
+  id: string;
+  memberNumber: string;
+  firstName: string;
+  lastName: string;
+  city: string;
+  status: MemberStatus;
+}

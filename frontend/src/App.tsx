@@ -7,6 +7,9 @@ import { PageHeader } from './components/PageHeader';
 import { UserMenu } from './components/UserMenu';
 import { ChangePasswordPage } from './features/auth/ChangePasswordPage';
 import { LoginPage } from './features/auth/LoginPage';
+import { MemberCreatePage } from './features/members/MemberCreatePage';
+import { MemberDetailPage } from './features/members/MemberDetailPage';
+import { MembersPage } from './features/members/MembersPage';
 import { UsersPage } from './features/users/UsersPage';
 
 function DashboardPlaceholder() {
@@ -41,6 +44,11 @@ export default function App() {
         >
           <Route path="/passwort-aendern" element={<ChangePasswordPage />} />
           <Route index element={<DashboardPlaceholder />} />
+          <Route path="/mitglieder" element={<MembersPage />} />
+          <Route path="/mitglieder/:id" element={<MemberDetailPage />} />
+          <Route element={<RequireRole roles={['Admin', 'Secretary']} />}>
+            <Route path="/mitglieder/neu" element={<MemberCreatePage />} />
+          </Route>
           <Route element={<RequireRole roles={['Admin']} />}>
             <Route path="/benutzer" element={<UsersPage />} />
           </Route>

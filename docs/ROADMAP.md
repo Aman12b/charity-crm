@@ -27,13 +27,13 @@ Work top to bottom. A phase is done when all its boxes are ticked, `docker compo
 - [x] Integration tests: auth flows, lockout, 401/403 matrix for user endpoints
 
 ## Phase 2 – Members
-- [ ] Member entity, member number sequence, indexes, migration
-- [ ] Create with duplicate check, edit with optimistic concurrency, de-register, reactivate (FR-MEM-01, 04..06)
-- [ ] List with search, filter, pagination; details (FR-MEM-02/03)
-- [ ] CSV export (FR-MEM-07)
-- [ ] Audit entries for all member changes
-- [ ] Frontend: member list, create/edit form (zod), detail page, de-register dialog
-- [ ] Tests: validation rules, duplicate warning, Cashier read-only (403 on write), Secretary access
+- [x] Member entity, member number sequence, indexes, migration
+- [x] Create with duplicate check, edit with optimistic concurrency, de-register, reactivate (FR-MEM-01, 04..06)
+- [x] List with search, filter, pagination; details (FR-MEM-02/03)
+- [x] CSV export (FR-MEM-07)
+- [x] Audit entries for all member changes
+- [x] Frontend: member list, create/edit form (zod), detail page, de-register dialog
+- [x] Tests: validation rules, duplicate warning, Cashier read-only (403 on write), Secretary access
 
 ## Phase 3 – Settings, payments & invoices
 - [ ] OrganizationSettings entity + seed defaults, settings endpoints and page (FR-FEE-01/02)

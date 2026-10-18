@@ -12,9 +12,15 @@ public static class AuditActions
     public const string UserDeactivated = "User.Deactivated";
     public const string UserReactivated = "User.Reactivated";
     public const string UserPasswordReset = "User.PasswordReset";
+
+    public const string MemberCreated = "Member.Created";
+    public const string MemberUpdated = "Member.Updated";
+    public const string MemberDeregistered = "Member.Deregistered";
+    public const string MemberReactivated = "Member.Reactivated";
 }
 
 public static class AuditEntityTypes
 {
     public const string User = "User";
+    public const string Member = "Member";
 }

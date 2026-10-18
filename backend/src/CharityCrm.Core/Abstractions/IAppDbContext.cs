@@ -8,8 +8,12 @@ public interface IAppDbContext
 {
     DbSet<AppUser> Users { get; }
     DbSet<AuditLog> AuditLogs { get; }
+    DbSet<Member> Members { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
+
+    /// <summary>Sets the concurrency token the client last saw, so SaveChanges fails on a stale version (NFR-REL-03).</summary>
+    void SetOriginalRowVersion<TEntity>(TEntity entity, uint rowVersion) where TEntity : class;
 
     /// <summary>Starts a database transaction; dispose without commit to roll back.</summary>
     Task<ITransaction> BeginTransactionAsync(CancellationToken ct = default);

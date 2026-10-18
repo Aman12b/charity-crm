@@ -1,4 +1,5 @@
 using CharityCrm.Core.Services.Auth;
+using CharityCrm.Core.Services.Members;
 using CharityCrm.Core.Services.Users;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<AuthService>();
         services.AddScoped<UserService>();
+        services.AddScoped<MemberService>();
         return services;
     }
 }
