@@ -12,7 +12,7 @@ import {
   Textarea,
   Title,
 } from '@mantine/core';
-import { IconArrowLeft, IconDownload } from '@tabler/icons-react';
+import { IconArrowLeft, IconDownload, IconMail } from '@tabler/icons-react';
 import { useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router';
@@ -25,6 +25,7 @@ import { formatCurrency, formatDate, formatDateTime, formatPeriod } from '../../
 import { handleFormError, notifyError, notifySuccess } from '../../lib/forms';
 import { requiredText } from '../../lib/schemas';
 import { downloadInvoicePdf, useCancelInvoice, useInvoice } from '../finance';
+import { ResendInvoiceModal } from './ResendInvoiceModal';
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -151,12 +152,24 @@ export function InvoiceDetailPage() {
 }
 
 function EmailSection({ invoice }: { invoice: Invoice }) {
+  const [resending, setResending] = useState(false);
   return (
     <Paper withBorder p="lg">
       <Group justify="space-between" mb="md">
-        <Title order={4}>E-Mail-Versand</Title>
-        <EmailStatusBadge status={invoice.emailStatus} />
+        <Group gap="sm">
+          <Title order={4}>E-Mail-Versand</Title>
+          <EmailStatusBadge status={invoice.emailStatus} />
+        </Group>
+        <Button
+          size="xs"
+          variant="light"
+          leftSection={<IconMail size={14} />}
+          onClick={() => setResending(true)}
+        >
+          Erneut senden
+        </Button>
       </Group>
+      <ResendInvoiceModal invoice={invoice} opened={resending} onClose={() => setResending(false)} />
       <Grid>
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <Field label="Empfänger">{invoice.member.email}</Field>

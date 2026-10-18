@@ -55,5 +55,9 @@ public static class FinanceEndpoints
         group.MapPost("/{id:guid}/cancel", (Guid id, CancelInvoiceRequest request, InvoiceService invoices, CancellationToken ct) =>
                 invoices.CancelAsync(id, request, ct))
             .WithValidation<CancelInvoiceRequest>();
+
+        group.MapPost("/{id:guid}/resend", (Guid id, ResendInvoiceRequest request, InvoiceService invoices) =>
+                invoices.ResendAsync(id, request))
+            .WithValidation<ResendInvoiceRequest>();
     }
 }

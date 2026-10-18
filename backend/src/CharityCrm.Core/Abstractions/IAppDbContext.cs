@@ -12,6 +12,7 @@ public interface IAppDbContext
     DbSet<OrganizationSettings> OrganizationSettings { get; }
     DbSet<Payment> Payments { get; }
     DbSet<Invoice> Invoices { get; }
+    DbSet<EmailOutboxMessage> EmailOutboxMessages { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 

@@ -1,6 +1,7 @@
 using CharityCrm.Core.Abstractions;
 using CharityCrm.Core.Common;
 using CharityCrm.Core.Entities;
+using CharityCrm.Core.Services.Email;
 using Microsoft.EntityFrameworkCore;
 
 namespace CharityCrm.Core.Services.Invoices;
@@ -92,6 +93,24 @@ public sealed class InvoiceService(
         await storage.SaveAsync(invoice.PdfPath, pdf.Render(invoice), ct);
         await db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
+        return ToDto(invoice);
+    }
+
+    /// <summary>FR-MAIL-03: queues the invoice email again, optionally to a different address.</summary>
+    public async Task<InvoiceDto> ResendAsync(Guid id, ResendInvoiceRequest request)
+    {
+        var invoice = await FindAsync(id, track: true);
+        var address = request.Email.TrimToNull() ?? invoice.MemberSnapshot.Email;
+        if (address is null)
+        {
+            throw new BusinessRuleException(
+                "Für dieses Mitglied ist keine E-Mail-Adresse hinterlegt. Bitte eine Adresse angeben.", "NO_EMAIL");
+        }
+
+        var message = EmailOutbox.Enqueue(db, invoice, address, clock.UtcNow);
+        audit.Add(AuditActions.InvoiceResent, AuditEntityTypes.Invoice, invoice.Id.ToString(),
+            new AuditChanges().Set("outboxMessageId", message.Id));
+        await db.SaveChangesAsync();
         return ToDto(invoice);
     }
 

@@ -95,3 +95,15 @@ public sealed class InvoiceNumberSequenceConfiguration : IEntityTypeConfiguratio
         b.Property(s => s.Year).ValueGeneratedNever();
     }
 }
+
+public sealed class EmailOutboxMessageConfiguration : IEntityTypeConfiguration<EmailOutboxMessage>
+{
+    public void Configure(EntityTypeBuilder<EmailOutboxMessage> b)
+    {
+        b.HasOne(m => m.Invoice).WithMany().HasForeignKey(m => m.InvoiceId).OnDelete(DeleteBehavior.Restrict);
+        b.Property(m => m.ToAddress).HasMaxLength(254).IsRequired();
+        b.Property(m => m.Status).HasConversion<string>().HasMaxLength(10);
+        b.Property(m => m.LastError).HasMaxLength(1000);
+        b.HasIndex(m => new { m.Status, m.NextAttemptAt });
+    }
+}

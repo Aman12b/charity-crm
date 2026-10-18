@@ -21,4 +21,15 @@ public sealed class DbLocks(AppDbContext db) : IDbLocks
             .ToListAsync(ct);
         return values.Single();
     }
+
+    public async Task<IReadOnlyList<Guid>> ClaimDueOutboxMessagesAsync(DateTimeOffset now, int batchSize, CancellationToken ct = default) =>
+        await db.Database.SqlQuery<Guid>(
+                $"""
+                SELECT "Id" AS "Value" FROM "EmailOutboxMessages"
+                WHERE "Status" = 'Pending' AND "NextAttemptAt" <= {now}
+                ORDER BY "NextAttemptAt"
+                LIMIT {batchSize}
+                FOR UPDATE SKIP LOCKED
+                """)
+            .ToListAsync(ct);
 }

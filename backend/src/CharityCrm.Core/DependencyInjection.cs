@@ -1,4 +1,5 @@
 using CharityCrm.Core.Services.Auth;
+using CharityCrm.Core.Services.Email;
 using CharityCrm.Core.Services.Invoices;
 using CharityCrm.Core.Services.Members;
 using CharityCrm.Core.Services.Payments;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<PaymentService>();
         services.AddScoped<InvoiceIssuer>();
         services.AddScoped<InvoiceService>();
+        services.AddScoped<EmailOutboxProcessor>();
         return services;
     }
 }

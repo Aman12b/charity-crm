@@ -11,4 +11,10 @@ public interface IDbLocks
     /// the increment, so numbers stay gap-free (FR-INV-01).
     /// </summary>
     Task<int> NextInvoiceNumberAsync(int year, CancellationToken ct = default);
+
+    /// <summary>
+    /// Locks up to <paramref name="batchSize"/> due outbox messages (FOR UPDATE SKIP LOCKED) and returns their ids,
+    /// so several workers never send the same message twice.
+    /// </summary>
+    Task<IReadOnlyList<Guid>> ClaimDueOutboxMessagesAsync(DateTimeOffset now, int batchSize, CancellationToken ct = default);
 }

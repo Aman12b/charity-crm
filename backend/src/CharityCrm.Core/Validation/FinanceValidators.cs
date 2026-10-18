@@ -66,3 +66,11 @@ public sealed class UpdateSettingsRequestValidator : AbstractValidator<UpdateSet
         RuleFor(x => x.YearlyFee).ValidAmount();
     }
 }
+
+public sealed class ResendInvoiceRequestValidator : AbstractValidator<ResendInvoiceRequest>
+{
+    public ResendInvoiceRequestValidator()
+    {
+        RuleFor(x => x.Email).ValidEmail().When(x => !string.IsNullOrWhiteSpace(x.Email));
+    }
+}

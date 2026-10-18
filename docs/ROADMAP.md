@@ -48,13 +48,13 @@ Work top to bottom. A phase is done when all its boxes are ticked, `docker compo
 - [x] Tests: concurrent invoice numbering (parallel requests → unique, gap-free), overlap rules, cancellation frees period, Secretary gets 403
 
 ## Phase 4 – Email delivery
-- [ ] SMTP options, MailKit `IEmailSender`, Mailpit in compose (NFR-OPS-05)
-- [ ] Outbox entity, enqueue in payment transaction (FR-MAIL-01)
-- [ ] `EmailOutboxWorker` with retries/backoff and status updates (FR-MAIL-02, NFR-REL-02)
-- [ ] German HTML + text template (FR-MAIL-04)
-- [ ] Resend endpoint + dialog (FR-MAIL-03)
-- [ ] Email status shown in invoice list/detail
-- [ ] Tests: worker success/failure/retry with fake sender; manual check in Mailpit UI
+- [x] SMTP options, MailKit `IEmailSender`, Mailpit in compose (NFR-OPS-05)
+- [x] Outbox entity, enqueue in payment transaction (FR-MAIL-01)
+- [x] `EmailOutboxWorker` with retries/backoff and status updates (FR-MAIL-02, NFR-REL-02)
+- [x] German HTML + text template (FR-MAIL-04)
+- [x] Resend endpoint + dialog (FR-MAIL-03)
+- [x] Email status shown in invoice list/detail
+- [x] Tests: worker success/failure/retry with fake sender; manual check in Mailpit UI
 
 ## Phase 5 – Reports & audit UI
 - [ ] Dashboard per role (FR-REP-01)

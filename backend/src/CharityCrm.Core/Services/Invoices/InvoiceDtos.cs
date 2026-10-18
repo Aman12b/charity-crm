@@ -51,4 +51,7 @@ public sealed record InvoiceListQuery(
 
 public sealed record CancelInvoiceRequest(string Reason);
 
+/// <param name="Email">Optional different recipient; defaults to the email on the invoice (FR-MAIL-03).</param>
+public sealed record ResendInvoiceRequest(string? Email);
+
 public sealed record InvoicePdf(string FileName, byte[] Content);

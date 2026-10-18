@@ -1,6 +1,7 @@
 using System.Globalization;
 using CharityCrm.Core.Abstractions;
 using CharityCrm.Core.Entities;
+using CharityCrm.Core.Services.Email;
 
 namespace CharityCrm.Core.Services.Invoices;
 
@@ -38,6 +39,12 @@ public sealed class InvoiceIssuer(
         };
         payment.Invoice = invoice;
         db.Invoices.Add(invoice);
+
+        // FR-MAIL-01: the email is sent asynchronously by the outbox worker.
+        if (!string.IsNullOrWhiteSpace(member.Email))
+        {
+            EmailOutbox.Enqueue(db, invoice, member.Email, clock.UtcNow);
+        }
 
         // Written before commit: if this fails, the whole payment transaction rolls back.
         await storage.SaveAsync(invoice.PdfPath, pdf.Render(invoice), ct);

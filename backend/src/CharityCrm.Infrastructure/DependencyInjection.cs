@@ -1,4 +1,5 @@
 using CharityCrm.Core.Abstractions;
+using CharityCrm.Infrastructure.Email;
 using CharityCrm.Infrastructure.Persistence;
 using CharityCrm.Infrastructure.Pdf;
 using CharityCrm.Infrastructure.Services;
@@ -32,6 +33,11 @@ public static class DependencyInjection
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.Section));
         services.AddSingleton<IInvoiceStorage, FileInvoiceStorage>();
         services.AddSingleton<IInvoicePdfRenderer, QuestPdfInvoiceRenderer>();
+
+        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.Section));
+        services.Configure<EmailWorkerOptions>(configuration.GetSection(EmailWorkerOptions.Section));
+        services.AddSingleton<IEmailSender, MailKitEmailSender>();
+        services.AddHostedService<EmailOutboxWorker>();
 
         return services;
     }

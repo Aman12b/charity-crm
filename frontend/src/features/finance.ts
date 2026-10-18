@@ -125,3 +125,12 @@ export function useCancelInvoice() {
     onSuccess: invalidate,
   });
 }
+
+export function useResendInvoice() {
+  const invalidate = useInvalidateFinance();
+  return useMutation({
+    mutationFn: ({ id, email }: { id: string; email: string | null }) =>
+      apiPost<Invoice>(`/invoices/${id}/resend`, { email }),
+    onSuccess: invalidate,
+  });
+}

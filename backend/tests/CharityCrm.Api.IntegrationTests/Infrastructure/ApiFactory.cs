@@ -3,6 +3,9 @@ using CharityCrm.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using CharityCrm.Core.Abstractions;
+using CharityCrm.Core.Services.Email;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
@@ -23,6 +26,9 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public string DataPath => _dataPath;
 
+    /// <summary>Replaces SMTP for all tests; the outbox is processed explicitly via <see cref="ProcessOutboxAsync"/>.</summary>
+    public FakeEmailSender Email { get; } = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -34,6 +40,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         // All tests share one client IP; the limit itself is tested with a dedicated host.
         builder.UseSetting("RateLimiting:LoginPermitsPerMinute", "100000");
         builder.UseSetting("Email:WorkerEnabled", "false");
+        builder.ConfigureTestServices(services => services.AddSingleton<IEmailSender>(Email));
     }
 
     public async Task InitializeAsync() => await _db.StartAsync();
@@ -89,6 +96,17 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await using var scope = Services.CreateAsyncScope();
         return await action(scope.ServiceProvider.GetRequiredService<AppDbContext>());
+    }
+
+    /// <summary>Runs the outbox processor until no due message is left.</summary>
+    public async Task ProcessOutboxAsync()
+    {
+        int processed;
+        do
+        {
+            await using var scope = Services.CreateAsyncScope();
+            processed = await scope.ServiceProvider.GetRequiredService<EmailOutboxProcessor>().ProcessBatchAsync();
+        } while (processed > 0);
     }
 
     public async Task WithDbAsync(Func<AppDbContext, Task> action)
