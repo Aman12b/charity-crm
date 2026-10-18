@@ -1,16 +1,16 @@
 name: CI/CD
 
 # - Pull requests: tests only (GitHub-hosted runners, never the home server).
-# - Push to main:  tests -> build images -> push to GHCR -> deploy on the home server.
+# - Push to master: tests -> build images -> push to GHCR -> deploy on the home server.
 # - Manual run:    deploy an existing image tag (rollback), e.g. a previous commit SHA.
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Image tag to deploy (commit SHA). Empty = build and deploy current main."
+        description: "Image tag to deploy (commit SHA). Empty = build and deploy current master."
         required: false
         default: ""
 
@@ -53,7 +53,7 @@ jobs:
 
   build:
     needs: [backend-test, frontend-test]
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -88,7 +88,7 @@ jobs:
     needs: [build]
     # Runs after a successful build, or directly for a manual rollback with a tag.
     if: >-
-      always() && github.ref == 'refs/heads/main' &&
+      always() && github.ref == 'refs/heads/master' &&
       (needs.build.result == 'success' ||
        (github.event_name == 'workflow_dispatch' && inputs.tag != ''))
     # Self-hosted runner inside the Proxmox LXC (labels: self-hosted, charity-crm).
