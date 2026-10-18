@@ -229,3 +229,47 @@ export interface Invoice {
   emailLastError: string | null;
   createdAt: string;
 }
+
+export interface Dashboard {
+  activeMembers: number;
+  newMembersThisMonth: number;
+  paymentsThisMonthCount: number | null;
+  paymentsThisMonthSum: number | null;
+  failedEmails: number | null;
+  openContributions: number | null;
+}
+
+export interface OpenContribution {
+  memberId: string;
+  memberNumber: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  billingInterval: BillingInterval;
+  periodStart: string;
+  periodEnd: string;
+  expectedAmount: number;
+}
+
+export interface OpenContributions extends PagedResult<OpenContribution> {
+  year: number;
+  month: number;
+}
+
+export interface PaymentSummary {
+  year: number;
+  months: { month: number; count: number; sum: number }[];
+  totalCount: number;
+  totalSum: number;
+}
+
+export interface AuditEntry {
+  id: number;
+  timestamp: string;
+  userId: string | null;
+  userName: string | null;
+  action: string;
+  entityType: string | null;
+  entityId: string | null;
+  changes: string | null;
+}

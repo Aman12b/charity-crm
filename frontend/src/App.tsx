@@ -5,7 +5,9 @@ import { useAuth } from './auth/useAuth';
 import { AppLayout } from './components/AppLayout';
 import { PageHeader } from './components/PageHeader';
 import { UserMenu } from './components/UserMenu';
+import { AuditPage } from './features/audit/AuditPage';
 import { ChangePasswordPage } from './features/auth/ChangePasswordPage';
+import { DashboardPage } from './features/dashboard/DashboardPage';
 import { LoginPage } from './features/auth/LoginPage';
 import { MemberCreatePage } from './features/members/MemberCreatePage';
 import { MemberDetailPage } from './features/members/MemberDetailPage';
@@ -14,17 +16,9 @@ import { InvoiceDetailPage } from './features/invoices/InvoiceDetailPage';
 import { InvoicesPage } from './features/invoices/InvoicesPage';
 import { PaymentsPage } from './features/payments/PaymentsPage';
 import { RecordPaymentPage } from './features/payments/RecordPaymentPage';
+import { ReportsPage } from './features/reports/ReportsPage';
 import { SettingsPage } from './features/settings/SettingsPage';
 import { UsersPage } from './features/users/UsersPage';
-
-function DashboardPlaceholder() {
-  return (
-    <>
-      <PageHeader title="Dashboard" />
-      <Text>Willkommen im Charity CRM.</Text>
-    </>
-  );
-}
 
 function NotFoundPage() {
   return (
@@ -48,7 +42,7 @@ export default function App() {
           }
         >
           <Route path="/passwort-aendern" element={<ChangePasswordPage />} />
-          <Route index element={<DashboardPlaceholder />} />
+          <Route index element={<DashboardPage />} />
           <Route path="/mitglieder" element={<MembersPage />} />
           <Route path="/mitglieder/:id" element={<MemberDetailPage />} />
           <Route element={<RequireRole roles={['Admin', 'Secretary']} />}>
@@ -59,10 +53,12 @@ export default function App() {
             <Route path="/zahlungen/neu" element={<RecordPaymentPage />} />
             <Route path="/rechnungen" element={<InvoicesPage />} />
             <Route path="/rechnungen/:id" element={<InvoiceDetailPage />} />
+            <Route path="/berichte" element={<ReportsPage />} />
           </Route>
           <Route element={<RequireRole roles={['Admin']} />}>
             <Route path="/benutzer" element={<UsersPage />} />
             <Route path="/einstellungen" element={<SettingsPage />} />
+            <Route path="/protokoll" element={<AuditPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

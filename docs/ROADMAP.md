@@ -57,11 +57,11 @@ Work top to bottom. A phase is done when all its boxes are ticked, `docker compo
 - [x] Tests: worker success/failure/retry with fake sender; manual check in Mailpit UI
 
 ## Phase 5 – Reports & audit UI
-- [ ] Dashboard per role (FR-REP-01)
-- [ ] Open contributions report (FR-REP-02)
-- [ ] Payment summary per month + CSV (FR-REP-03)
-- [ ] Audit log page with filters (FR-AUD-02)
-- [ ] Tests for report calculations (monthly vs yearly payers, cancelled payments excluded)
+- [x] Dashboard per role (FR-REP-01)
+- [x] Open contributions report (FR-REP-02)
+- [x] Payment summary per month + CSV (FR-REP-03)
+- [x] Audit log page with filters (FR-AUD-02)
+- [x] Tests for report calculations (monthly vs yearly payers, cancelled payments excluded)
 
 ## Phase 6 – Hardening
 - [ ] Security headers verified, CSP works with built app (NFR-SEC-06)

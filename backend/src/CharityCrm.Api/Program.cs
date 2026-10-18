@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using CharityCrm.Api.Features.Auth;
 using CharityCrm.Api.Features.Finance;
 using CharityCrm.Api.Features.Members;
+using CharityCrm.Api.Features.Reports;
 using CharityCrm.Api.Features.Users;
 using CharityCrm.Api.Setup;
 using CharityCrm.Core;
@@ -70,6 +71,7 @@ app.MapMemberEndpoints();
 app.MapSettingsEndpoints();
 app.MapPaymentEndpoints();
 app.MapInvoiceEndpoints();
+app.MapReportEndpoints();
 
 await DatabaseInitializer.InitializeAsync(app.Services);
 

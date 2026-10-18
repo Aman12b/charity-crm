@@ -1,8 +1,10 @@
 using CharityCrm.Core.Services.Auth;
+using CharityCrm.Core.Services.Audit;
 using CharityCrm.Core.Services.Email;
 using CharityCrm.Core.Services.Invoices;
 using CharityCrm.Core.Services.Members;
 using CharityCrm.Core.Services.Payments;
+using CharityCrm.Core.Services.Reports;
 using CharityCrm.Core.Services.Settings;
 using CharityCrm.Core.Services.Users;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,8 @@ public static class DependencyInjection
         services.AddScoped<InvoiceIssuer>();
         services.AddScoped<InvoiceService>();
         services.AddScoped<EmailOutboxProcessor>();
+        services.AddScoped<ReportService>();
+        services.AddScoped<AuditService>();
         return services;
     }
 }
