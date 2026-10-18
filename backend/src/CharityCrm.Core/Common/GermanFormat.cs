@@ -34,4 +34,11 @@ public static class GermanFormat
     };
 
     public static string Status(MemberStatus status) => status == MemberStatus.Active ? "Aktiv" : "Inaktiv";
+
+    public static string Method(PaymentMethod method) => method switch
+    {
+        PaymentMethod.BankTransfer => "Überweisung",
+        PaymentMethod.Cash => "Bar",
+        _ => "Sonstige",
+    };
 }

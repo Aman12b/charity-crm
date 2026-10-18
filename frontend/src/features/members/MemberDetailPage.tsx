@@ -11,6 +11,7 @@ import { PageHeader } from '../../components/PageHeader';
 import { formatDate, formatDateTime } from '../../lib/format';
 import { handleFormError, notifyError, notifySuccess } from '../../lib/forms';
 import { DeregisterModal } from './DeregisterModal';
+import { MemberFinance } from './MemberFinance';
 import { MemberForm } from './MemberForm';
 import { memberFields, toMemberInput } from './memberSchema';
 import { useMember, useMemberMutations } from './membersApi';
@@ -31,6 +32,7 @@ export function MemberDetailPage() {
   const { id } = useParams();
   const { data: member, isLoading, error } = useMember(id);
   const canWrite = useHasRole('Admin', 'Secretary');
+  const canSeeFinance = useHasRole('Admin', 'Cashier');
   const [editing, setEditing] = useState(false);
   const [deregistering, setDeregistering] = useState(false);
   const { update, reactivate } = useMemberMutations();
@@ -95,6 +97,7 @@ export function MemberDetailPage() {
 
       <Stack>
         <MemberFields member={member} />
+        {canSeeFinance && <MemberFinance member={member} />}
       </Stack>
 
       <Modal opened={editing} onClose={() => setEditing(false)} title="Mitglied bearbeiten" size="xl">

@@ -36,16 +36,16 @@ Work top to bottom. A phase is done when all its boxes are ticked, `docker compo
 - [x] Tests: validation rules, duplicate warning, Cashier read-only (403 on write), Secretary access
 
 ## Phase 3 – Settings, payments & invoices
-- [ ] OrganizationSettings entity + seed defaults, settings endpoints and page (FR-FEE-01/02)
-- [ ] Payment entity, period calculation, overlap check (FR-PAY-01)
-- [ ] InvoiceNumberSequence with row lock, gap-free numbering (FR-INV-01, NFR-REL-03)
-- [ ] Invoice entity with snapshots; QuestPDF document; file storage (FR-INV-01)
-- [ ] Record payment as single transaction (NFR-REL-01)
-- [ ] Payment list with filters and sum (FR-PAY-02)
-- [ ] Invoice list, detail, PDF download (FR-INV-02/03)
-- [ ] Cancel invoice incl. "STORNIERT" PDF (FR-INV-04)
-- [ ] Frontend: settings page, record-payment form (member search, period picker, prefilled amount), payment list, invoice list + detail
-- [ ] Tests: concurrent invoice numbering (parallel requests → unique, gap-free), overlap rules, cancellation frees period, Secretary gets 403
+- [x] OrganizationSettings entity + seed defaults, settings endpoints and page (FR-FEE-01/02)
+- [x] Payment entity, period calculation, overlap check (FR-PAY-01)
+- [x] InvoiceNumberSequence with row lock, gap-free numbering (FR-INV-01, NFR-REL-03)
+- [x] Invoice entity with snapshots; QuestPDF document; file storage (FR-INV-01)
+- [x] Record payment as single transaction (NFR-REL-01)
+- [x] Payment list with filters and sum (FR-PAY-02)
+- [x] Invoice list, detail, PDF download (FR-INV-02/03)
+- [x] Cancel invoice incl. "STORNIERT" PDF (FR-INV-04)
+- [x] Frontend: settings page, record-payment form (member search, period picker, prefilled amount), payment list, invoice list + detail
+- [x] Tests: concurrent invoice numbering (parallel requests → unique, gap-free), overlap rules, cancellation frees period, Secretary gets 403
 
 ## Phase 4 – Email delivery
 - [ ] SMTP options, MailKit `IEmailSender`, Mailpit in compose (NFR-OPS-05)

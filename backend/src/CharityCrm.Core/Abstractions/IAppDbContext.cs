@@ -9,6 +9,9 @@ public interface IAppDbContext
     DbSet<AppUser> Users { get; }
     DbSet<AuditLog> AuditLogs { get; }
     DbSet<Member> Members { get; }
+    DbSet<OrganizationSettings> OrganizationSettings { get; }
+    DbSet<Payment> Payments { get; }
+    DbSet<Invoice> Invoices { get; }
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 

@@ -1,6 +1,8 @@
 using CharityCrm.Core.Abstractions;
 using CharityCrm.Infrastructure.Persistence;
+using CharityCrm.Infrastructure.Pdf;
 using CharityCrm.Infrastructure.Services;
+using CharityCrm.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,11 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IClock, SystemClock>();
         services.AddScoped<IAuditLogger, AuditLogger>();
+        services.AddScoped<IDbLocks, DbLocks>();
+
+        services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.Section));
+        services.AddSingleton<IInvoiceStorage, FileInvoiceStorage>();
+        services.AddSingleton<IInvoicePdfRenderer, QuestPdfInvoiceRenderer>();
 
         return services;
     }

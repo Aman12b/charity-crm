@@ -13,6 +13,10 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 {
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Member> Members => Set<Member>();
+    public DbSet<OrganizationSettings> OrganizationSettings => Set<OrganizationSettings>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
+    public DbSet<InvoiceNumberSequence> InvoiceNumberSequences => Set<InvoiceNumberSequence>();
 
     public void SetOriginalRowVersion<TEntity>(TEntity entity, uint rowVersion) where TEntity : class =>
         Entry(entity).Property<uint>("RowVersion").OriginalValue = rowVersion;

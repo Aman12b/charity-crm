@@ -99,3 +99,133 @@ export interface DuplicateMember {
   city: string;
   status: MemberStatus;
 }
+
+export interface Settings {
+  name: string;
+  street: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  email: string | null;
+  phone: string | null;
+  iban: string | null;
+  bic: string | null;
+  zvrNumber: string | null;
+  invoiceFooterText: string | null;
+  monthlyFee: number;
+  yearlyFee: number;
+  updatedAt: string;
+}
+
+export type PaymentMethod = 'BankTransfer' | 'Cash' | 'Other';
+export type PaymentStatus = 'Recorded' | 'Cancelled';
+export type InvoiceStatus = 'Issued' | 'Cancelled';
+export type EmailStatus = 'NotApplicable' | 'Pending' | 'Sent' | 'Failed';
+
+export const methodLabels: Record<PaymentMethod, string> = {
+  BankTransfer: 'Überweisung',
+  Cash: 'Bar',
+  Other: 'Sonstige',
+};
+export const paymentStatusLabels: Record<PaymentStatus, string> = {
+  Recorded: 'Erfasst',
+  Cancelled: 'Storniert',
+};
+export const invoiceStatusLabels: Record<InvoiceStatus, string> = {
+  Issued: 'Ausgestellt',
+  Cancelled: 'Storniert',
+};
+export const emailStatusLabels: Record<EmailStatus, string> = {
+  NotApplicable: 'Keine E-Mail',
+  Pending: 'Ausstehend',
+  Sent: 'Versendet',
+  Failed: 'Fehlgeschlagen',
+};
+export const methodOptions = Object.entries(methodLabels).map(([value, label]) => ({ value, label }));
+export const paymentStatusOptions = Object.entries(paymentStatusLabels).map(([value, label]) => ({
+  value,
+  label,
+}));
+export const invoiceStatusOptions = Object.entries(invoiceStatusLabels).map(([value, label]) => ({
+  value,
+  label,
+}));
+export const emailStatusOptions = Object.entries(emailStatusLabels).map(([value, label]) => ({
+  value,
+  label,
+}));
+
+export interface Payment {
+  id: string;
+  memberId: string;
+  memberNumber: string;
+  memberName: string;
+  interval: BillingInterval;
+  periodStart: string;
+  periodEnd: string;
+  amount: number;
+  paymentDate: string;
+  method: PaymentMethod;
+  reference: string | null;
+  status: PaymentStatus;
+  invoiceId: string | null;
+  invoiceNumber: string | null;
+  createdAt: string;
+}
+
+export interface PaymentList extends PagedResult<Payment> {
+  totalAmount: number;
+}
+
+export interface RecordPaymentResult {
+  paymentId: string;
+  invoiceId: string;
+  invoiceNumber: string;
+}
+
+export interface InvoiceListItem {
+  id: string;
+  invoiceNumber: string;
+  issueDate: string;
+  memberId: string;
+  memberNumber: string;
+  memberName: string;
+  periodStart: string;
+  periodEnd: string;
+  amount: number;
+  status: InvoiceStatus;
+  emailStatus: EmailStatus;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  issueDate: string;
+  memberId: string;
+  paymentId: string;
+  periodStart: string;
+  periodEnd: string;
+  amount: number;
+  interval: BillingInterval;
+  paymentMethod: PaymentMethod;
+  paymentDate: string;
+  paymentReference: string | null;
+  member: {
+    memberNumber: string;
+    firstName: string;
+    lastName: string;
+    street: string;
+    postalCode: string;
+    city: string;
+    country: string;
+    email: string | null;
+  };
+  organization: { name: string };
+  status: InvoiceStatus;
+  cancelledAt: string | null;
+  cancellationReason: string | null;
+  emailStatus: EmailStatus;
+  emailSentAt: string | null;
+  emailLastError: string | null;
+  createdAt: string;
+}
