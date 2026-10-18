@@ -1,6 +1,7 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
+import './styles.css';
 
 import { MantineProvider } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
@@ -14,7 +15,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import App from './App';
 import { AuthProvider } from './auth/AuthProvider';
-import { theme } from './theme';
+import { cssVariablesResolver, theme } from './theme';
 
 dayjs.locale('de-at');
 
@@ -24,7 +25,7 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} cssVariablesResolver={cssVariablesResolver}>
       <DatesProvider settings={{ locale: 'de-at', firstDayOfWeek: 1 }}>
         <ModalsProvider>
           <Notifications position="top-right" />

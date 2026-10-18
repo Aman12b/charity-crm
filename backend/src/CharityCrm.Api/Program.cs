@@ -75,6 +75,15 @@ app.MapReportEndpoints();
 
 await DatabaseInitializer.InitializeAsync(app.Services);
 
+// Optional development command: dotnet CharityCrm.Api.dll seed-demo [members] [payments]
+if (args is ["seed-demo", ..])
+{
+    var memberCount = args.Length > 1 ? int.Parse(args[1], CultureInfo.InvariantCulture) : 5_000;
+    var paymentCount = args.Length > 2 ? int.Parse(args[2], CultureInfo.InvariantCulture) : 100_000;
+    await DemoDataSeeder.SeedAsync(app.Services, memberCount, paymentCount);
+    return;
+}
+
 await app.RunAsync();
 
 public partial class Program;

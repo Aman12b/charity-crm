@@ -1,0 +1,20 @@
+/* Keyboard users can jump past the navigation (NFR-UX-05). */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 1000;
+  padding: 8px 12px;
+  background: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+  border: 2px solid var(--mantine-primary-color-filled);
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  left: 8px;
+}
+
+#inhalt:focus {
+  outline: none;
+}

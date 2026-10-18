@@ -17,7 +17,7 @@ export function UserMenu() {
   return (
     <Menu position="bottom-end" withinPortal>
       <Menu.Target>
-        <UnstyledButton aria-label="Benutzermenü">
+        <UnstyledButton>
           <Group gap="xs">
             <Avatar color="teal" radius="xl" size="sm">
               {user.firstName[0]}

@@ -22,6 +22,9 @@ export function AppLayout({ role, headerRight }: AppLayoutProps) {
       navbar={{ width: 230, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="md"
     >
+      <a href="#inhalt" className="skip-link">
+        Zum Inhalt springen
+      </a>
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group gap="sm">
@@ -59,7 +62,7 @@ export function AppLayout({ role, headerRight }: AppLayoutProps) {
         )}
       </AppShell.Navbar>
 
-      <AppShell.Main>
+      <AppShell.Main id="inhalt" tabIndex={-1}>
         <Outlet />
       </AppShell.Main>
     </AppShell>

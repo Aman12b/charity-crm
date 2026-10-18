@@ -64,8 +64,8 @@ Work top to bottom. A phase is done when all its boxes are ticked, `docker compo
 - [x] Tests for report calculations (monthly vs yearly payers, cancelled payments excluded)
 
 ## Phase 6 – Hardening
-- [ ] Security headers verified, CSP works with built app (NFR-SEC-06)
-- [ ] Accessibility pass: labels, keyboard navigation, contrast (NFR-UX-05)
-- [ ] Performance check with seeded 5,000 members / 100,000 payments (NFR-PERF-01..03); optional dev seed command
-- [ ] `scripts/backup.sh` / `restore.sh` for DB + invoice volume (NFR-REL-04)
-- [ ] README: setup, roles, screenshots, how to switch to a real SMTP provider
+- [x] Security headers verified, CSP works with built app (NFR-SEC-06)
+- [x] Accessibility pass: labels, keyboard navigation, contrast (NFR-UX-05)
+- [x] Performance check with seeded 5,000 members / 100,000 payments (NFR-PERF-01..03); optional dev seed command
+- [x] `scripts/backup.sh` / `restore.sh` for DB + invoice volume (NFR-REL-04)
+- [x] README: setup, roles, screenshots, how to switch to a real SMTP provider
