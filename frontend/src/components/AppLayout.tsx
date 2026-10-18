@@ -13,7 +13,8 @@ export function AppLayout({ role, headerRight }: AppLayoutProps) {
   const [opened, { toggle, close }] = useDisclosure();
   const location = useLocation();
 
-  const isActive = (to: string) => (to === '/' ? location.pathname === '/' : location.pathname.startsWith(to));
+  const isActive = (to: string) =>
+    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
 
   return (
     <AppShell
@@ -24,7 +25,13 @@ export function AppLayout({ role, headerRight }: AppLayoutProps) {
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group gap="sm">
-            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" aria-label="Navigation umschalten" />
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+              aria-label="Navigation umschalten"
+            />
             <Title order={3} c="teal.8">
               Charity CRM
             </Title>

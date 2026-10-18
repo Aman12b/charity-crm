@@ -1,6 +1,10 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
+using CharityCrm.Api.Features.Auth;
+using CharityCrm.Api.Features.Users;
 using CharityCrm.Api.Setup;
+using CharityCrm.Core;
+using CharityCrm.Core.Common;
 using CharityCrm.Infrastructure;
 using CharityCrm.Infrastructure.Persistence;
 using FluentValidation;
@@ -26,25 +30,40 @@ builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 
 // Validation messages in German (UI language).
 ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("de");
+// Error keys in camelCase so the SPA can map them to form fields.
+ValidatorOptions.Global.PropertyNameResolver = (_, member, _) => member?.Name.ToCamelCase();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddValidatorsFromAssemblyContaining<CharityCrm.Core.Validation.LoginRequestValidator>();
 
-builder.Services.AddInfrastructure();
+builder.Services.AddCore();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAppSecurity(builder.Configuration);
 
 builder.Services.AddHealthChecks().AddDbContextCheck<AppDbContext>("database");
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
+app.UseAuthentication();
+app.UseMiddleware<AntiforgeryValidationMiddleware>();
+app.UseMiddleware<PasswordChangeRequiredMiddleware>();
+app.UseRateLimiter();
+app.UseAuthorization();
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapOpenApi().AllowAnonymous();
+    app.MapScalarApiReference().AllowAnonymous();
 }
 
-app.MapHealthChecks("/api/health", new HealthCheckOptions { ResponseWriter = HealthCheckResponse.WriteAsync });
+app.MapHealthChecks("/api/health", new HealthCheckOptions { ResponseWriter = HealthCheckResponse.WriteAsync })
+    .AllowAnonymous();
+app.MapAuthEndpoints();
+app.MapUserEndpoints();
 
 await DatabaseInitializer.InitializeAsync(app.Services);
 

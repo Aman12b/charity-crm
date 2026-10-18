@@ -15,16 +15,16 @@ Work top to bottom. A phase is done when all its boxes are ticked, `docker compo
 - [x] Frontend layout shell: German app layout with sidebar navigation, de-AT formatting helpers
 
 ## Phase 1 – Authentication & users
-- [ ] Identity with `AppUser`, roles, cookie auth, lockout, password policy (FR-AUTH-01..04, NFR-SEC-02/03)
-- [ ] Persisted Data Protection keys, ForwardedHeaders, anti-forgery (NFR-SEC-02)
-- [ ] Login rate limiting (NFR-SEC-07)
-- [ ] Seed initial admin from env (FR-AUTH-07)
-- [ ] Change password + forced password change filter (FR-AUTH-05/06)
-- [ ] Authorization policies AdminOnly / MemberRead / MemberWrite / Finance (ARCHITECTURE §6)
-- [ ] Audit log entity + `IAuditLogger`; log logins (FR-AUD-01)
-- [ ] User management endpoints incl. last-admin protection and session invalidation (FR-USR-01..06)
-- [ ] Frontend: login page, AuthProvider, route guards, change-password page, user management pages
-- [ ] Integration tests: auth flows, lockout, 401/403 matrix for user endpoints
+- [x] Identity with `AppUser`, roles, cookie auth, lockout, password policy (FR-AUTH-01..04, NFR-SEC-02/03)
+- [x] Persisted Data Protection keys, ForwardedHeaders, anti-forgery (NFR-SEC-02)
+- [x] Login rate limiting (NFR-SEC-07)
+- [x] Seed initial admin from env (FR-AUTH-07)
+- [x] Change password + forced password change filter (FR-AUTH-05/06)
+- [x] Authorization policies AdminOnly / MemberRead / MemberWrite / Finance (ARCHITECTURE §6)
+- [x] Audit log entity + `IAuditLogger`; log logins (FR-AUD-01)
+- [x] User management endpoints incl. last-admin protection and session invalidation (FR-USR-01..06)
+- [x] Frontend: login page, AuthProvider, route guards, change-password page, user management pages
+- [x] Integration tests: auth flows, lockout, 401/403 matrix for user endpoints
 
 ## Phase 2 – Members
 - [ ] Member entity, member number sequence, indexes, migration

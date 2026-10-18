@@ -33,3 +33,7 @@ public sealed class InputValidationException(IDictionary<string, string[]> error
     {
     }
 }
+
+/// <summary>Maps to 401 – login failed. The message never reveals which field was wrong (FR-AUTH-01).</summary>
+public sealed class AuthenticationFailedException(string message, string code = "INVALID_CREDENTIALS")
+    : DomainException(message, code);

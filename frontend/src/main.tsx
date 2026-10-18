@@ -13,6 +13,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import App from './App';
+import { AuthProvider } from './auth/AuthProvider';
 import { theme } from './theme';
 
 dayjs.locale('de-at');
@@ -28,9 +29,11 @@ createRoot(document.getElementById('root')!).render(
         <ModalsProvider>
           <Notifications position="top-right" />
           <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
+            <AuthProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </AuthProvider>
           </QueryClientProvider>
         </ModalsProvider>
       </DatesProvider>
